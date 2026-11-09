@@ -127,10 +127,13 @@ bool Sensors::settling() const {
 }
 
 float Sensors::phFromVolts(float v) const {
-  float span = cfg.phVolt7 - cfg.phVolt4;
-  if (isnan(v) || fabsf(span) < 0.02f) return NAN;   // uncalibrated or shorted
-  float slope = (7.0f - 4.0f) / span;
-  float ph = 4.0f + (v - cfg.phVolt4) * slope;
+  // Straight line through the two buffer points, using the pH the buffers
+  // really are (e.g. 4.01 / 6.86) rather than assuming 4.00 / 7.00.
+  float span   = cfg.phVolt7 - cfg.phVolt4;
+  float phSpan = cfg.phBufHi - cfg.phBufLo;
+  if (isnan(v) || fabsf(span) < 0.02f || phSpan < 0.5f) return NAN;   // uncalibrated or shorted
+  float slope = phSpan / span;
+  float ph = cfg.phBufLo + (v - cfg.phVolt4) * slope;
   if (ph < -1.0f || ph > 15.0f) return NAN;
   return ph;
 }
@@ -175,12 +178,15 @@ bool Sensors::calibratePh(float knownPh) {
   float v = readChannelVolts(ADS_CH_PH, 15);
   if (isnan(v)) return false;
 
-  if (fabsf(knownPh - 4.0f) < 0.5f)      cfg.phVolt4 = v;
-  else if (fabsf(knownPh - 7.0f) < 0.5f) cfg.phVolt7 = v;
+  // knownPh only picks the point (~4 = acid, ~7 = neutral). The buffer's real
+  // value lives in cfg.phBufLo / phBufHi and is applied in phFromVolts().
+  float buf;
+  if (fabsf(knownPh - 4.0f) < 0.5f)      { cfg.phVolt4 = v; buf = cfg.phBufLo; }
+  else if (fabsf(knownPh - 7.0f) < 0.5f) { cfg.phVolt7 = v; buf = cfg.phBufHi; }
   else return false;
 
   settingsMarkDirty();
-  Serial.printf("[cal] pH %.1f -> %.4f V\n", knownPh, v);
+  Serial.printf("[cal] pH %.2f buffer -> %.4f V\n", buf, v);
   return true;
 }
 

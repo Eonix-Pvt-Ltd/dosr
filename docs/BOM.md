@@ -222,8 +222,8 @@ colour) where the firmware drove an I²C SSD1306 (128×64, mono). What changed:
 |---|---|---|
 | Silicone tubing | ~2 m | to match pump head bore |
 | Dosing bottles / reservoirs | 4 | one per nutrient |
-| pH 7.00 buffer | 1 | two-point calibration, first point |
-| pH 4.00 buffer | 1 | two-point calibration, second point |
+| pH 6.86 or 7.00 buffer | 1 | two-point calibration, neutral point — set `cfg.phBufHi` to match |
+| pH 4.01 or 4.00 buffer | 1 | two-point calibration, acid point — set `cfg.phBufLo` to match |
 | EC standard | 1 | **1413 µS/cm** — the firmware's default `ecCalStandard` |
 | Measuring cylinder | 1 | 25–50 ml, for pump calibration (*Run 20s* → measure → enter) |
 | Reservoir float switch | 0–1 | optional, `cfg.floatEnabled`, `cfg.floatActiveLow` |

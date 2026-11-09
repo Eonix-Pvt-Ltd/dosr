@@ -270,9 +270,28 @@ flattens with age and throughput drops noticeably.
 
 ## Calibrating the probes
 
-Two-point for pH: rinse, sit the probe in pH 7.00 buffer, wait for the reading
-to settle, then Menu → Sensors → *Cal in pH 7.00*. Rinse, repeat in pH 4.00.
-Calibration is refused while a pump is running or settling.
+Two-point for pH. First tell the firmware what your buffers really are:
+Menu → Sensors → *Neutral buf pH* and *Acid buf pH* (or the two boxes on the
+web panel). They default to 7.00 and 4.00; powder sachets are usually
+**6.86** and **4.01** — use the value the sachet's table gives for your
+solution temperature. Reading a 6.86 buffer as 7.00 skews every reading by
+about 0.14 pH. The menu's calibrate rows rename themselves to match.
+
+Then rinse, sit the probe in the neutral buffer, wait for *pH volts* to stop
+moving, and press *Cal in pH 6.86* (or whatever it reads). Rinse, repeat in
+the acid buffer with *Cal in pH 4.01*. Calibration is refused while a pump is
+running or settling. Only voltages are captured, so a buffer value typed in
+wrong can be corrected afterwards without recalibrating.
+
+On a PH-4502C, centre the board once beforehand: unplug the probe, short the
+BNC centre pin to its shell, and turn the trimmer nearest the BNC until
+*pH volts* reads 2.50 V. Never calibrate in distilled water — it has too few
+ions for a stable reading and no buffering; use it for rinsing only.
+
+Do both points, and set any auto pump with a pH target to Off or Manual first.
+The slope comes from the pair, so after only one point (or with the figures
+left from a different pH board) the reading can be several pH off, and auto
+mode doses on that reading without checking whether it has been calibrated.
 
 EC is single-point: put the probe in a known standard, set *EC standard* to
 that value (1413 µS/cm is the usual one), then *Cal EC now*.

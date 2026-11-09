@@ -23,7 +23,7 @@ public:
 
   // Stores the current raw voltage as the calibration point for the given
   // buffer solution. Returns false if the reading is not currently trustworthy.
-  bool calibratePh(float knownPh);       // pass 4.0 or 7.0
+  bool calibratePh(float knownPh);       // 4 = acid buffer point, 7 = neutral; real values in cfg.phBufLo/Hi
   bool calibrateEc(float knownUsPerCm);  // e.g. 1413.0
 
   float phFromVolts(float v) const;

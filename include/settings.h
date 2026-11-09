@@ -45,8 +45,8 @@ struct Settings {
   float    ecDeadband;        // uS/cm
 
   // Sensor calibration
-  float    phVolt4;           // ADS volts measured in pH 4.00 buffer
-  float    phVolt7;           // ADS volts measured in pH 7.00 buffer
+  float    phVolt4;           // sensor volts measured in the acid buffer (phBufLo)
+  float    phVolt7;           // sensor volts measured in the neutral buffer (phBufHi)
   float    ecCalFactor;       // uS/cm per volt
   float    tempC;             // manual solution temperature for EC compensation
 
@@ -66,6 +66,16 @@ struct Settings {
   char     mqttUser[33];
   char     mqttPass[65];
   char     deviceName[17];
+
+  // --- Added in settings version 2. Keep new fields at the end: a v1 blob
+  // is then a byte-for-byte prefix of this struct and loads without loss.
+
+  // The pH printed on the calibration buffers actually used. Powder sachets
+  // are commonly 4.01 / 6.86 / 9.18 rather than 4.00 / 7.00; reading a 6.86
+  // buffer as 7.00 skews every reading by ~0.14 pH. Only the voltages are
+  // captured at calibration time, so these can be corrected afterwards.
+  float    phBufLo;           // acid buffer, ~4 (default 4.00)
+  float    phBufHi;           // neutral buffer, ~7 (default 7.00)
 };
 
 extern Settings cfg;

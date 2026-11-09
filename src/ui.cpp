@@ -314,8 +314,16 @@ static void buildSensors() {
   snprintf(buf, sizeof(buf), "%.3fV", isnan(r.phVolt) ? 0.0f : r.phVolt);
   addItem("pH volts", K_INFO, nullptr, 0,0,0, nullptr,0,0, buf);
 
-  addItem("Cal in pH 4.00", K_ACTION, nullptr, 0,0,0, nullptr,0, A_CAL_PH4);
-  addItem("Cal in pH 7.00", K_ACTION, nullptr, 0,0,0, nullptr,0, A_CAL_PH7);
+  // Set each buffer to the pH printed on its sachet (6.86, 4.01, ...), then
+  // calibrate in it. The labels follow the values so the menu says which
+  // solution the probe should be sitting in.
+  char lbl[19];
+  addItem("Neutral buf pH", K_FLOAT, &cfg.phBufHi, 6.0f, 8.0f, 0.01f);
+  snprintf(lbl, sizeof(lbl), "Cal in pH %.2f", cfg.phBufHi);
+  addItem(lbl, K_ACTION, nullptr, 0,0,0, nullptr,0, A_CAL_PH7);
+  addItem("Acid buf pH",    K_FLOAT, &cfg.phBufLo, 3.0f, 5.0f, 0.01f);
+  snprintf(lbl, sizeof(lbl), "Cal in pH %.2f", cfg.phBufLo);
+  addItem(lbl, K_ACTION, nullptr, 0,0,0, nullptr,0, A_CAL_PH4);
 
   if (isnan(r.ec)) strlcpy(buf, "--", sizeof(buf));
   else snprintf(buf, sizeof(buf), "%.0f", r.ec);
@@ -483,13 +491,14 @@ static void runAction(uint8_t a) {
       rebuild();
       break;
     case A_CAL_PH4:
-      ui.toast(sensors.calibratePh(4.0f) ? "pH 4 stored" : "Not ready");
+    case A_CAL_PH7: {
+      bool acid = (a == A_CAL_PH4);
+      char msg[22];
+      snprintf(msg, sizeof(msg), "pH %.2f stored", acid ? cfg.phBufLo : cfg.phBufHi);
+      ui.toast(sensors.calibratePh(acid ? 4.0f : 7.0f) ? msg : "Not ready");
       rebuild();
       break;
-    case A_CAL_PH7:
-      ui.toast(sensors.calibratePh(7.0f) ? "pH 7 stored" : "Not ready");
-      rebuild();
-      break;
+    }
     case A_CAL_EC:
       ui.toast(sensors.calibrateEc(ecCalStandard) ? "EC stored" : "Not ready");
       rebuild();

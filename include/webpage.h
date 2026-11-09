@@ -75,10 +75,12 @@ button.stop{border-color:var(--bad);color:var(--bad)}
 </div>
 
 <div class="card">
+  <label>pH buffers as printed on the sachets (acid / neutral) &mdash; Save settings after changing</label>
+  <div class="grid"><input id="buflo" type="number" step="0.01"><input id="bufhi" type="number" step="0.01"></div>
   <label>Calibration</label>
   <div class="grid" style="margin-bottom:8px">
-    <button onclick="cal('ph',4)">Probe in pH 4.00</button>
-    <button onclick="cal('ph',7)">Probe in pH 7.00</button>
+    <button id="callo" onclick="cal('ph',4)">Probe in pH 4.00</button>
+    <button id="calhi" onclick="cal('ph',7)">Probe in pH 7.00</button>
   </div>
   <div class="row"><input class="grow" id="ecstd" type="number" value="1413">
   <button onclick="cal('ec',+document.getElementById('ecstd').value)">Set EC standard</button></div>
@@ -153,6 +155,9 @@ async function load(){
   $('phsp').value=C.phSetpoint;$('phdb').value=C.phDeadband;
   $('ecsp').value=C.ecSetpoint;$('ecdb').value=C.ecDeadband;
   $('mix').value=C.mixWaitSec;$('settle').value=C.settleSec;$('temp').value=C.tempC;
+  $('buflo').value=C.phBufLo.toFixed(2);$('bufhi').value=C.phBufHi.toFixed(2);
+  $('callo').textContent='Probe in pH '+C.phBufLo.toFixed(2);
+  $('calhi').textContent='Probe in pH '+C.phBufHi.toFixed(2);
   $('ssid').value=C.wifiSsid;$('mqh').value=C.mqttHost;$('mqp').value=C.mqttPort;$('mqu').value=C.mqttUser;
 }
 
@@ -163,6 +168,7 @@ async function save(){
     phSetpoint:+$('phsp').value,phDeadband:+$('phdb').value,
     ecSetpoint:+$('ecsp').value,ecDeadband:+$('ecdb').value,
     mixWaitSec:+$('mix').value,settleSec:+$('settle').value,tempC:+$('temp').value,
+    phBufLo:+$('buflo').value,phBufHi:+$('bufhi').value,
     wifiSsid:$('ssid').value,mqttHost:$('mqh').value,mqttPort:+$('mqp').value,mqttUser:$('mqu').value};
   if($('pass').value)b.wifiPass=$('pass').value;
   if($('mqw').value)b.mqttPass=$('mqw').value;

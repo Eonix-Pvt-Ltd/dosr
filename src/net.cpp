@@ -102,6 +102,8 @@ static void buildSettings(JsonDocument& d) {
   d["settleSec"]  = cfg.settleSec;
   d["tempC"]      = cfg.tempC;
   d["ecCalFactor"] = cfg.ecCalFactor;
+  d["phBufLo"]    = cfg.phBufLo;
+  d["phBufHi"]    = cfg.phBufHi;
   d["wifiSsid"]   = cfg.wifiSsid;
   d["mqttHost"]   = cfg.mqttHost;
   d["mqttPort"]   = cfg.mqttPort;
@@ -182,6 +184,8 @@ static void hPostSettings() {
   if (d["mixWaitSec"].is<int>())   clampSet(cfg.mixWaitSec, d["mixWaitSec"].as<float>(), 5, 3600);
   if (d["settleSec"].is<int>())    clampSet(cfg.settleSec, d["settleSec"].as<float>(), SETTLE_MIN_SEC, 300);
   if (d["tempC"].is<float>())      clampSet(cfg.tempC, d["tempC"].as<float>(), 0.0f, 50.0f);
+  if (d["phBufLo"].is<float>())    clampSet(cfg.phBufLo, d["phBufLo"].as<float>(), 3.0f, 5.0f);
+  if (d["phBufHi"].is<float>())    clampSet(cfg.phBufHi, d["phBufHi"].as<float>(), 6.0f, 8.0f);
 
   if (d["wifiSsid"].is<const char*>()) strlcpy(cfg.wifiSsid, d["wifiSsid"], sizeof(cfg.wifiSsid));
   if (d["wifiPass"].is<const char*>()) strlcpy(cfg.wifiPass, d["wifiPass"], sizeof(cfg.wifiPass));
